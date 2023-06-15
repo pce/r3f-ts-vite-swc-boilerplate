@@ -2,20 +2,24 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import "./app.scss";
 import CamAnimation from "./animations/cam-animation";
-import Boxes from "./boxes";
+import Moon from "./moon";
 
 function App() {
-  return <div className="App">
-    <div className="CanvasWrapper">
-      <Canvas camera={{ position: [0, 0, 5] }} shadows={true}>
-        <ambientLight castShadow={true} />
-        <pointLight position={[-10, -10, -10]} />
-        <Boxes rows={10} columns={10}/>
-        <OrbitControls />
-        <CamAnimation />
-      </Canvas>
+
+
+  return (
+    <div className="App">
+      <div className="CanvasWrapper">
+        <Canvas camera={{ position: [-20, -10, 5] }} shadows={true}>
+          {/* <ambientLight/> */}
+          <pointLight position={[-10, -10, -10]} />
+          <Moon pos={[0, 0, 0]} />
+          <OrbitControls />
+          <CamAnimation/>
+        </Canvas>
+      </div>
     </div>
-  </div>;
+  );
 }
 
 export default App;
