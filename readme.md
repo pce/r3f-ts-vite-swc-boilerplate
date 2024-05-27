@@ -23,7 +23,7 @@ Options: adjust basePath at index.html <base href="./"> (ie over env variable) a
 ## TODO
 
 - MoonExample: Texture not seamless?
-
+- SkyboxExample: EnvMap of Sphere, adjust image dimensions and angle
 
 ## Stack
 
