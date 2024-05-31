@@ -1,7 +1,9 @@
 // FlockingArrows.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Vector3 } from 'three';
+import useMousePosition from '../hooks/use-mouse-position';
 import ArrowShape from './arrow-shape';
+
 
 const NUM_ARROWS = 20;
 
@@ -36,18 +38,41 @@ const FlockingArrows: React.FC = () => {
     }))
   );
 
+  const mousePosition = useMousePosition();
+  const animationFrameId = useRef<number>();
+
   useEffect(() => {
-    const interval = setInterval(() => {
+    const updateArrows = () => {
       setArrows((prevArrows) =>
         prevArrows.map((arrow) => {
-          const newPos = new Vector3(...arrow.position).add(arrow.velocity);
-          return { ...arrow, position: [newPos.x, newPos.y, newPos.z] };
+          // Calculate the vector from the arrow to the mouse position
+          const mouseVector = new Vector3(
+            (mousePosition.x / window.innerWidth) * 2 - 1,
+            -(mousePosition.y / window.innerHeight) * 2 + 1,
+            0
+          );
+          const arrowVector = new Vector3(...arrow.position);
+          const direction = mouseVector.sub(arrowVector).normalize();
+
+          // Update the arrow's position and velocity
+          const newVelocity = arrow.velocity.add(direction.multiplyScalar(0.01)); // Adjust speed here
+          const newPos = arrowVector.add(newVelocity);
+
+          return { ...arrow, position: [newPos.x, newPos.y, newPos.z], velocity: newVelocity };
         })
       );
-    }, 16);
 
-    return () => clearInterval(interval);
-  }, []);
+      animationFrameId.current = requestAnimationFrame(updateArrows);
+    };
+
+    animationFrameId.current = requestAnimationFrame(updateArrows);
+
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, [mousePosition]);
 
   return (
     <>
